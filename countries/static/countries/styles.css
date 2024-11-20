@@ -1,0 +1,172 @@
+:root {
+    --primary-light-red: #a52a2a;
+    --primary-dark-red: #8b0909;
+    --primary-beige: #f2ebe2;
+    --primary-brown: #806350;
+}
+
+.navbar {
+    background-color: var(--primary-dark-red);
+
+
+    a {
+        color: var(--primary-beige);
+    }
+
+    a.clicked {
+        color: var(--primary-brown);
+    }
+
+    .navbar-brand {
+        margin-right: 30px;
+    }
+
+    .nav-item {
+        margin-right: 15px;
+    }
+}
+
+body {
+    background-color: var(--primary-light-red);
+    margin-top: 80px;
+
+    .main-column {
+        width: 90%;
+        margin: 0 auto;
+
+        #title-container {
+            margin-top: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+
+            .page-title {
+                color: var(--primary-beige);
+                margin: 0;
+            }
+
+            #search-bar-container {
+                position: relative;
+                flex-grow: 1;
+                overflow: hidden;
+                box-sizing: border-box;
+
+                .search-icon {
+                    position: absolute;
+                    left: 15px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: var(--primary-light-red);
+                    font-size: 1rem;
+                }
+
+                #search-bar-input {
+                    width: 100%;
+                    padding: 8px 45px;
+                    box-sizing: border-box;
+                    outline: 2px solid var(--primary-brown);
+                    border-radius: 20px;
+                    border: 1px solid white;
+                    background-color: var(--primary-beige);
+                    color: var(--primary-light-red);
+                    font-weight: bold;
+                }
+
+                #close-search-btn {
+                    position: absolute;
+                    right: 25px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: var(--primary-light-red);
+                    font-size: 1rem;
+                }
+
+                #close-search-btn:hover {
+                    color: black;
+                    cursor: pointer;
+                    font-size: 1.3rem;
+                }
+            }
+        }
+
+        #no-query {
+            color: var(--primary-beige);
+        }
+
+        .country-box {
+            width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 10px;
+            background-color: var(--primary-beige);
+            color: var(--primary-light-red);
+            
+            .title-div {
+                display: flex;
+                align-items: center;
+
+                .flag {
+                    width: 32px;
+                    height: auto;
+                    margin-right: 20px;
+                }
+
+                .country-name {
+                    margin-bottom: 0;
+                }
+
+                .country-name.expanded {
+                    font-size: 24px;
+                }
+                
+                .collapse-expand-btn {
+                    margin-left: auto;
+
+                    i {
+                        color: var(--primary-light-red);
+                    }
+                }
+            }
+
+            .details {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .column {
+                    flex: 1;
+
+                    p {
+                        margin-bottom: 10px;
+                    }
+                }
+                
+                .image-column {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    img {
+                        width: 240px;
+                        height: auto;
+                    }
+                }
+            }
+        }
+
+        .country-box:hover {
+            cursor: pointer;
+
+            .collapse-expand-btn i {
+                color: black;
+                transform: scale(2.0);
+            }
+        }
+
+        .country-box.collapsed:hover {
+            background-color: #d2b48c;
+            color: var(--primary-beige);
+        }
+    }
+}
