@@ -1,5 +1,6 @@
 let openedBox;
 let countriesList = [];
+let allCountries = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch Countries API when page loaded 
@@ -18,9 +19,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (a.name.common > b.name.common) return 1;
         return 0; // If names are equal
     });
+    // Initialize empty arrays to collect filters
+    let allContinents = [];
+    let allLanguages = [];
+    let allCurrencies = [];
     // Append results (countries) to HTML
     const container = document.getElementById('all-countries-container');
-    data.forEach(item => {
+    data.forEach(countryData => {
         // Create country container
         const countryBox = document.createElement('div');
         countryBox.classList.add('country-box', 'collapsed');
@@ -31,13 +36,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Create country image (flag)
         const countryImg = document.createElement('img');
         countryImg.classList.add('flag');
-        const countryFlag = item.flags.png;
+        const countryFlag = countryData.flags.png;
         countryImg.src = countryFlag;
         titleDiv.append(countryImg);
         // Create country title
         const countryTitle = document.createElement('h6');
         countryTitle.classList.add('country-name');
-        const countryName = item.name.common;
+        const countryName = countryData.name.common;
         countryBox.setAttribute('id', countryName);
         countriesList.push(countryName);
         countryTitle.textContent = `${countryName}`;
@@ -51,7 +56,63 @@ document.addEventListener('DOMContentLoaded', async () => {
         collapseButton.appendChild(collapseButtonIcon);
         // Define country box expansion when clicked
         countryBox.onclick = () => {toggleCountry(countryBox)};
+        // Save country's continent on a list with all continents
+        for (const continent of countryData.continents) {
+            if (!allContinents.includes(continent)) {
+                allContinents.push(continent);
+            }
+        }
+        allContinents.sort();
+        // Save country's language on a list with all languages
+        for (const language of Object.values(countryData.languages ?? {})) {
+            if (!allLanguages.includes(language)) {
+                allLanguages.push(language);
+            }
+        }
+        allLanguages.sort();
+        // Save country's currency on a list with all currencies
+        for (const currency of Object.keys(countryData.currencies ?? {})) {
+            const currencySymbol = countryData.currencies[currency]?.symbol;
+            if (currencySymbol && !allCurrencies.includes(`${currency} (${currencySymbol})`)) {
+                allCurrencies.push(`${currency} (${currencySymbol})`);
+            }
+        }
+        allCurrencies.sort();
+        // Save country's info on a list with all countries
+        allCountries[countryName] = {
+            officialName: countryData.name?.official ?? '-',
+            continents: countryData.continents?.join(', ') ?? '-',
+            population: countryData.population ?? '-',
+            area: countryData.area ?? '-',
+            capital: countryData.capital?.join(', ') ?? '-',
+            languages: countryData.languages ? Object.values(countryData.languages).join(', ') : '-',
+            currencies: countryData.currencies ?? '-',
+            flagUrl: countryData.flags.png ?? '-'
+        };
     });
+    // Generate the 'filters box' options
+    const fragment = document.createDocumentFragment();
+    allContinents.forEach((continent, index) => {
+        // Create the checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `filter-continent-${index}`;
+        checkbox.name = 'continent';
+        checkbox.value = continent;
+        // Create the label
+        const label = document.createElement('label');
+        label.setAttribute('for', `filter-continent-${index + 1}`);
+        label.textContent = continent;
+        // Create a div with checkbox + label
+        const div = document.createElement('div');
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        // Append the container to the DocumentFragment
+        fragment.appendChild(div);
+    })
+    const filterContinentDiv = document.getElementById('filter-continent');
+    filterContinentDiv.appendChild(fragment);
+    // CONTINUE!!
 
     // Add search bar functionality
     let typingTimer;
@@ -70,11 +131,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (inputValue.length >= 1) {
             noQuery.classList.remove('d-none');
             closeSearchBtn.classList.remove('d-none');
-            hide_all_countries();
+            hideAllCountries();
         } else {
             noQuery.classList.add('d-none');
             closeSearchBtn.classList.add('d-none');
-            show_all_countries();
+            showAllCountries();
         }
         // Set a timeout to trigger the function after the user stops typing
     });
@@ -82,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const inputValue = this.value;
         if (inputValue.length < 3) {
             noQuery.classList.remove('d-none');
-            hide_all_countries();
+            hideAllCountries();
         }
         closeSearchBtn.classList.remove('d-none');
     });
@@ -99,69 +160,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchBarInput.value = '';
         noQuery.classList.add('d-none');
         closeSearchBtn.classList.add('d-none');
-        show_all_countries();
+        showAllCountries();
     });
+
+    // Add filters functionality
+    const filtersBtn = document.getElementById('filters-btn');
+    filtersBtn.addEventListener('click', () => {
+        toggleFiltersSidepanel();
+    })
+    const backdrop = document.getElementById('backdrop');
+    backdrop.addEventListener('click', () => {
+        toggleFiltersSidepanel();
+    })
 })
 
-function toggleClass(element, classToToggle) {
-    if (element.classList.contains(classToToggle)) {
-        element.classList.remove(classToToggle);
-    } else {
-        element.classList.add(classToToggle);
-    }
-}
-
-async function toggleCountry(countryBox) {
-    if (countryBox.classList.contains('collapsed')) {
-        if (openedBox) {
-            toggleCountry(openedBox);
-        }
-        if (!countryBox.querySelector('details')) {
-            await expand_country(countryBox);
-        }
-        openedBox = countryBox;
-    } else {
-        openedBox = null;
-    }
-    toggleClass(countryBox, 'collapsed');
-    const countryBoxTitle = countryBox.querySelector('.country-name');
-    toggleClass(countryBoxTitle, 'expanded');
-    const countryBoxDetails = countryBox.querySelector('.details');
-    toggleClass(countryBoxDetails, 'd-none');
-    toggleTitleDiv(countryBox);
-}
-
-function toggleTitleDiv (countryBox) {
-    const titleDiv = countryBox.querySelector('.title-div');
-    const flagTag = titleDiv.querySelector('.flag');
-    const collapseButtonIcon = titleDiv.querySelector('.collapse-expand-btn i');
-    toggleClass(flagTag, 'd-none');
-    toggleClass(collapseButtonIcon, 'fa-chevron-down');
-    toggleClass(collapseButtonIcon, 'fa-chevron-up');
-}
-
 // Expand a country 'box' to show country details
-async function expand_country(countryBox) {
+async function expandCountry(countryBox) {
     const countryTitle = countryBox.querySelector('.country-name');
+    console.log(allCountries);
     const countryName = countryTitle ? countryTitle.textContent : null;
-    try {
-        const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        data = await response.json();
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-    const countryData = data[0];
-    const officialName = countryData.name?.official ?? '-';
-    const continents = countryData.continents?.join(', ') ?? '-';
-    const population = countryData.population ?? '-';
-    const area = countryData.area ?? '-';
-    const capital = countryData.capital?.join(', ') ?? '-';
-    const languages = countryData.languages ? Object.values(countryData.languages).join(', ') : '-';
-    const currencies = countryData.currencies ?? '-';
-    const flagUrl = countryData.flags.png ?? '-';
+    const countryData = allCountries[countryName];
+    const officialName = countryData.officialName;
+    const continents = countryData.continents;
+    const population = countryData.population;
+    const area = countryData.area;
+    const capital = countryData.capital;
+    const languages = countryData.languages;
+    const currencies = countryData.currencies;
+    const flagUrl = countryData.flagUrl;
     // Create country box 'details' div with two columns for expanded box: 'Text' and 'Image' (flag)
     const countryBoxDetails = document.createElement('div');
     countryBoxDetails.classList.add('details', 'd-none');
@@ -222,6 +248,23 @@ async function expand_country(countryBox) {
     imageColumn.appendChild(flagTag);
 }
 
+function hideAllCountries() {
+    const allCountriesContainer = document.getElementById('all-countries-container');
+    allCountriesContainer.classList.add('d-none');
+    const searchContainer = document.getElementById('search-container');
+    searchContainer.innerHTML = '';
+    if (openedBox) {
+        toggleCountry(openedBox);
+    }
+}
+
+function toggleFiltersSidepanel() {
+    const filtersSidepanel = document.getElementById('filters-box');
+    toggleClass(filtersSidepanel, 'active-sidepanel');
+    const backdrop = document.getElementById('backdrop');
+    toggleClass(backdrop, 'd-none');
+}
+
 function search(inputValue) {
     const matchedCountries = [];
     countriesList.forEach(country => {
@@ -241,18 +284,45 @@ function search(inputValue) {
     });
 }
 
-function hide_all_countries() {
-    const allCountriesContainer = document.getElementById('all-countries-container');
-    allCountriesContainer.classList.add('d-none');
-    const searchContainer = document.getElementById('search-container');
-    searchContainer.innerHTML = '';
-    if (openedBox) {
-        toggleCountry(openedBox);
-    }
-}
-
-function show_all_countries() {
+function showAllCountries() {
     const allCountriesContainer = document.getElementById('all-countries-container');
     allCountriesContainer.classList.remove('d-none');
     searchContainer.innerHTML = '';
+}
+
+function toggleClass(element, classToToggle) {
+    if (element.classList.contains(classToToggle)) {
+        element.classList.remove(classToToggle);
+    } else {
+        element.classList.add(classToToggle);
+    }
+}
+
+async function toggleCountry(countryBox) {
+    if (countryBox.classList.contains('collapsed')) {
+        if (openedBox) {
+            toggleCountry(openedBox);
+        }
+        if (!countryBox.querySelector('details')) {
+            await expandCountry(countryBox);
+        }
+        openedBox = countryBox;
+    } else {
+        openedBox = null;
+    }
+    toggleClass(countryBox, 'collapsed');
+    const countryBoxTitle = countryBox.querySelector('.country-name');
+    toggleClass(countryBoxTitle, 'expanded');
+    const countryBoxDetails = countryBox.querySelector('.details');
+    toggleClass(countryBoxDetails, 'd-none');
+    toggleTitleDiv(countryBox);
+}
+
+function toggleTitleDiv (countryBox) {
+    const titleDiv = countryBox.querySelector('.title-div');
+    const flagTag = titleDiv.querySelector('.flag');
+    const collapseButtonIcon = titleDiv.querySelector('.collapse-expand-btn i');
+    toggleClass(flagTag, 'd-none');
+    toggleClass(collapseButtonIcon, 'fa-chevron-down');
+    toggleClass(collapseButtonIcon, 'fa-chevron-up');
 }

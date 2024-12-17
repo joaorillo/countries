@@ -26,28 +26,59 @@
                 </div>
             </div>
         </nav>
-        <!-- Body -->
-         <div class="main-column">
-            <!-- Page's title -->
-            <div id="title-container">
-                <h4 class="page-title">Countries</h4>
-                <div id="search-bar-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input id="search-bar-input" type="text">
-                    <i id="close-search-btn" class="fas fa-times d-none"></i>
+        <div id="main-column">
+            <!-- Filters Box -->
+            <div id="filters-box">
+                <div id="filters-box-title-div">
+                    <h5 id="filters-box-title">Filters</h5>
+                    <button id="filters-box-close-btn" class="d-lg-none">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="filter-continent">
+                    <h6 class="filter-title">Continent<h6>
+                </div>
+                <div id="filter-language">
+                    <h6 class="filter-title">Language<h6>
+                </div>
+                <div id="filter-currency">
+                    <h6 class="filter-title">Currency<h6>
                 </div>
             </div>
-            <!-- 'No query' warning -->
-            <div id="no-query" class="d-none">
-                <p>Type at least 3 characters to begin search</p>
+            <!-- Main Column (Search Bar + Country Cards) -->
+            <div id="countries-column">
+                <!-- Page's title -->
+                <div id="title-container">
+                    <div id ="filters-btn-div" class="d-lg-none">
+                        <button id="filters-btn">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </div>
+                    <div id="search-bar-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input id="search-bar-input" type="text">
+                        <i id="close-search-btn" class="fas fa-times d-none"></i>
+                    </div>
+                    <div id ="sort-div">
+                        <button id="sort-btn">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- 'No query' warning -->
+                <div id="no-query" class="d-none">
+                    <p>Type at least 3 characters to begin search</p>
+                </div>
+                <!-- Home page -->
+                <div id="home" class="d-block">
+                    <!-- 'All countries' container -->
+                    <div id="all-countries-container"></div>
+                    <!-- 'Search' container -->
+                    <div id="search-container"></div>
+                </div>
             </div>
-            <!-- Home page -->
-            <div id="home" class="d-block">
-                <!-- 'All countries' container -->
-                <div id="all-countries-container"></div>
-                <!-- 'Search' container -->
-                <div id="search-container"></div>
-            </div>
+            <!-- Backdrop -->
+            <div id="backdrop" class="d-none d-lg-none"></div>
         </div>
     </body>
 </html>
