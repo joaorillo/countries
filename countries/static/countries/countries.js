@@ -90,8 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             flagUrl: countryData.flags.png ?? '-'
         };
     });
-    // Generate the 'filters box' options
-    const fragment = document.createDocumentFragment();
+    // Generate the 'filters box' continents options
+    const continentFragment = document.createDocumentFragment();
     allContinents.forEach((continent, index) => {
         // Create the checkbox
         const checkbox = document.createElement('input');
@@ -108,11 +108,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         div.appendChild(checkbox);
         div.appendChild(label);
         // Append the container to the DocumentFragment
-        fragment.appendChild(div);
+        continentFragment.appendChild(div);
     })
     const filterContinentDiv = document.getElementById('filter-continent');
-    filterContinentDiv.appendChild(fragment);
-    // CONTINUE!!
+    filterContinentDiv.appendChild(continentFragment);
+    // Generate the 'filters box' languages options
+    const languageFragment = document.createDocumentFragment();
+    allLanguages.forEach((language, index) => {
+        // Create the checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `filter-language-${index}`;
+        checkbox.name = 'language';
+        checkbox.value = language;
+        // Create the label
+        const label = document.createElement('label');
+        label.setAttribute('for', `filter-language-${index + 1}`);
+        label.textContent = language;
+        // Create a div with checkbox + label
+        const div = document.createElement('div');
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        // Append the container to the DocumentFragment
+        languageFragment.appendChild(div);
+    })
+    const filterLanguageDiv = document.getElementById('filter-language');
+    filterLanguageDiv.appendChild(languageFragment);
+    // Generate the 'filters box' currencies options
+    const currencyFragment = document.createDocumentFragment();
+    allCurrencies.forEach((currency, index) => {
+        // Create the checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `filter-currency-${index}`;
+        checkbox.name = 'currency';
+        checkbox.value = currency;
+        // Create the label
+        const label = document.createElement('label');
+        label.setAttribute('for', `filter-currency-${index + 1}`);
+        label.textContent = currency;
+        // Create a div with checkbox + label
+        const div = document.createElement('div');
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        // Append the container to the DocumentFragment
+        currencyFragment.appendChild(div);
+    })
+    const filterCurrencyDiv = document.getElementById('filter-currency');
+    filterCurrencyDiv.appendChild(currencyFragment);
 
     // Add search bar functionality
     let typingTimer;
@@ -170,6 +213,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
     const backdrop = document.getElementById('backdrop');
     backdrop.addEventListener('click', () => {
+        toggleFiltersSidepanel();
+    })
+    const filtersBoxCloseBtn = document.getElementById('filters-box-close-btn');
+    filtersBoxCloseBtn.addEventListener('click', () => {
         toggleFiltersSidepanel();
     })
 })

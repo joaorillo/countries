@@ -87,17 +87,22 @@ body {
                 }
             }
 
-            .filter-title {
-                color: var(--primary-dark-red);
-                margin-top: 10px;
-            }
+            #filters-box-options-div {
+                height: calc(100% - 50px);
+                overflow-y: auto;
 
-            input {
-                margin-left: 20px;
-            }
+                .filter-title {
+                    color: var(--primary-dark-red);
+                    margin-top: 10px;
+                }
 
-            label {
-                color: var(--primary-light-red);
+                input {
+                    margin-left: 20px;
+                }
+
+                label {
+                    color: var(--primary-light-red);
+                }
             }
         }
 
