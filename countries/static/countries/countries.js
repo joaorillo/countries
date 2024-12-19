@@ -284,23 +284,19 @@ function applyFilter(type, value) {
         });
         const anyMatchingCurrency = countryCurrenciesArray.some(currency => selectedCurrencies.includes(currency));
 
-        // Debugging logs for Algeria
-        if (countryName === 'Albania') {
-            console.log(`${countryName}`);
-            console.log(`    anyMatchingContinent: ${anyMatchingContinent}`);
-            console.log(`    anyMatchingLanguage: ${anyMatchingLanguage}`);
-            // console.log(`    countryCurrencies: ${countryCurrencies}`);
-            // console.log(`    countryCurrenciesArray: ${countryCurrenciesArray}`);
-            // console.log(`    selectedCurrencies: ${selectedCurrencies}`);
-            console.log(`    anyMatchingCurrency: ${anyMatchingCurrency}`);
-        }
-
-        // Toggle visibility of country box
+        // Toggle visibility of country box (and their search 'clones')
         const countryBox = document.getElementById(countryName);
+        const countryBoxSearch = document.getElementById(`${countryName}-search`);
         if (anyMatchingContinent && anyMatchingLanguage && anyMatchingCurrency) {
             countryBox.classList.remove('d-none');
+            if (countryBoxSearch) {
+                countryBoxSearch.classList.remove('d-none');
+            }
         } else {
             countryBox.classList.add('d-none');
+            if (countryBoxSearch) {
+                countryBoxSearch.classList.add('d-none');
+            }
         }
     }
 }
@@ -403,6 +399,7 @@ function search(inputValue) {
     matchedCountries.forEach(({ country }) => {
         const countryBox = document.getElementById(country);
         const clonedBox = countryBox.cloneNode(true);
+        clonedBox.id = `${country}-search`;
         clonedBox.onclick = () => {toggleCountry(clonedBox)};
         searchContainer.appendChild(clonedBox);
     });
