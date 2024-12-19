@@ -22,10 +22,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (a.name.common > b.name.common) return 1;
         return 0; // If names are equal
     });
+
     // Initialize empty arrays to collect filters
     let allContinents = [];
     let allLanguages = [];
     let allCurrencies = [];
+
     // Append results (countries) to HTML
     const container = document.getElementById('all-countries-container');
     data.forEach(countryData => {
@@ -90,6 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             flagUrl: countryData.flags.png ?? '-'
         };
     });
+
     // Reorder lists and initializes selected filters' lists
     allContinents.sort();
     selectedContinents = allContinents;
@@ -177,6 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     filterCurrencyDiv.appendChild(currencyFragment);
     const filtersBox = document.getElementById('filters-box-options-div');
         const inputElements = filtersBox.querySelectorAll('input');
+
     // Add functionality to 'Select all' and 'Unselect all' filters
     selectAllFilters = document.getElementById('select-all-filters');
     selectAllFilters.addEventListener('click', () => {
@@ -194,6 +198,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     })
+
+    // Add sorting functionality
+    const sortBtn = document.getElementById('sort-btn');
+    const sortOptionsBox = document.getElementById('sort-options-box');
+    sortBtn.addEventListener('click', () => {
+        sortOptionsBox.style.display = sortOptionsBox.style.display === 'block' ? 'none' : 'block';
+    });
+    sortOptionsBox.querySelectorAll('button').forEach(option => {
+        option.addEventListener('click', () => {
+            const order = option.getAttribute('data-order');
+            console.log(`Selected order: ${order}`);
+            // Implement sorting logic based on the selected option here
+            sortOptionsBox.style.display = 'none';
+        });
+    });
+    document.addEventListener('click', (event) => {
+        if (!sortBtn.contains(event.target) && !sortOptionsBox.contains(event.target)) {
+            sortOptionsBox.style.display = 'none';
+        }
+    });
 
     // Add search bar functionality
     let typingTimer;

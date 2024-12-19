@@ -53,8 +53,8 @@
             </div>
             <!-- Main Column (Search Bar + Country Cards) -->
             <div id="countries-column">
-                <!-- Page's title -->
-                <div id="title-container">
+                <!-- Page's top elements -->
+                <div id="top-container">
                     <div id ="filters-btn-div" class="d-lg-none">
                         <button id="filters-btn">
                             <i class="fas fa-filter"></i>
@@ -65,10 +65,16 @@
                         <input id="search-bar-input" type="text">
                         <i id="close-search-btn" class="fas fa-times d-none"></i>
                     </div>
-                    <div id ="sort-div">
+                    <div id ="sort-btn-div">
                         <button id="sort-btn">
-                            <i class="fas fa-filter"></i>
+                            <i class="fas fa-sort"></i>
                         </button>
+                        <div id="sort-options-box">
+                            <button data-order="asc">Sort Ascending</button>
+                            <button data-order="desc">Sort Descending</button>
+                            <button data-order="alpha">Sort Alphabetically</button>
+                            <button data-order="custom">Custom Sort</button>
+                          </div>
                     </div>
                 </div>
                 <!-- 'No query' warning -->
