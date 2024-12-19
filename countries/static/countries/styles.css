@@ -65,7 +65,7 @@ body {
                 align-items: center;
                 justify-content: space-between;
                 width: 100%;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
 
                 #filters-box-title {
                     color: var(--primary-dark-red);
@@ -88,8 +88,22 @@ body {
                 }
             }
 
+            #select-unselect-filters-div {
+                margin-bottom: 15px;
+
+                .select-unselect-filters {
+                    margin-right: 15px;
+                    color: var(--primary-brown);
+                }
+
+                .select-unselect-filters:hover {
+                    color: var(--primary-dark-red);
+                    cursor: pointer;
+                }
+            }
+
             #filters-box-options-div {
-                height: calc(100% - 50px);
+                height: calc(100% - 65px);
                 overflow-y: auto;
 
                 .filter-title {

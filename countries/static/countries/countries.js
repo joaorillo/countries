@@ -175,6 +175,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
     const filterCurrencyDiv = document.getElementById('filter-currency');
     filterCurrencyDiv.appendChild(currencyFragment);
+    const filtersBox = document.getElementById('filters-box-options-div');
+        const inputElements = filtersBox.querySelectorAll('input');
+    // Add functionality to 'Select all' and 'Unselect all' filters
+    selectAllFilters = document.getElementById('select-all-filters');
+    selectAllFilters.addEventListener('click', () => {
+        inputElements.forEach((input) => {
+            if (!input.checked) {
+                input.click();
+            }
+        });
+    })
+    unselectAllFilters = document.getElementById('unselect-all-filters');
+    unselectAllFilters.addEventListener('click', () => {
+        inputElements.forEach((input) => {
+            if (input.checked) {
+                input.click();
+            }
+        });
+    })
 
     // Add search bar functionality
     let typingTimer;
