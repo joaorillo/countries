@@ -1,6 +1,9 @@
 let openedBox;
 let countriesList = [];
 let allCountries = {};
+let selectedContinents = []
+let selectedLanguages = []
+let selectedCurrencies = []
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch Countries API when page loaded 
@@ -62,14 +65,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 allContinents.push(continent);
             }
         }
-        allContinents.sort();
         // Save country's language on a list with all languages
         for (const language of Object.values(countryData.languages ?? {})) {
             if (!allLanguages.includes(language)) {
                 allLanguages.push(language);
             }
         }
-        allLanguages.sort();
         // Save country's currency on a list with all currencies
         for (const currency of Object.keys(countryData.currencies ?? {})) {
             const currencySymbol = countryData.currencies[currency]?.symbol;
@@ -77,7 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 allCurrencies.push(`${currency} (${currencySymbol})`);
             }
         }
-        allCurrencies.sort();
         // Save country's info on a list with all countries
         allCountries[countryName] = {
             officialName: countryData.name?.official ?? '-',
@@ -90,15 +90,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             flagUrl: countryData.flags.png ?? '-'
         };
     });
+    // Reorder lists and initializes selected filters' lists
+    allContinents.sort();
+    selectedContinents = allContinents;
+    allLanguages.sort();
+    selectedLanguages = allLanguages;
+    allCurrencies.sort();
+    selectedCurrencies = allCurrencies;
     // Generate the 'filters box' continents options
     const continentFragment = document.createDocumentFragment();
     allContinents.forEach((continent, index) => {
         // Create the checkbox
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.id = `filter-continent-${index}`;
+        checkbox.id = `filter-continent-${index + 1}`;
         checkbox.name = 'continent';
         checkbox.value = continent;
+        checkbox.checked = true;
+        checkbox.addEventListener('click', () => {
+            applyFilter('continent', continent);
+        })
         // Create the label
         const label = document.createElement('label');
         label.setAttribute('for', `filter-continent-${index + 1}`);
@@ -118,9 +129,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Create the checkbox
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.id = `filter-language-${index}`;
+        checkbox.id = `filter-language-${index + 1}`;
         checkbox.name = 'language';
         checkbox.value = language;
+        checkbox.checked = true;
+        checkbox.addEventListener('click', () => {
+            applyFilter('language', language)
+        });
         // Create the label
         const label = document.createElement('label');
         label.setAttribute('for', `filter-language-${index + 1}`);
@@ -140,9 +155,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Create the checkbox
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.id = `filter-currency-${index}`;
+        checkbox.id = `filter-currency-${index + 1}`;
         checkbox.name = 'currency';
         checkbox.value = currency;
+        checkbox.checked = true;
+        checkbox.addEventListener('click', () => {
+            applyFilter('currency', currency)
+        });
         // Create the label
         const label = document.createElement('label');
         label.setAttribute('for', `filter-currency-${index + 1}`);
@@ -220,6 +239,71 @@ document.addEventListener('DOMContentLoaded', async () => {
         toggleFiltersSidepanel();
     })
 })
+
+// Hide / unhide elements given a filter option that was clicked
+function applyFilter(type, value) {
+    // Update the corresponding 'selected filters' list
+    if (type == 'continent') {
+        if (!selectedContinents.includes(value)) {
+            selectedContinents.push(value);
+        } else {
+            selectedContinents = selectedContinents.filter(item => item !== value);
+        }
+    } else if (type == 'language') {
+        if (!selectedLanguages.includes(value)) {
+            selectedLanguages.push(value);
+        } else {
+            selectedLanguages = selectedLanguages.filter(item => item !== value);
+        }
+    } else {
+        if (!selectedCurrencies.includes(value)) {
+            selectedCurrencies.push(value);
+        } else {
+            selectedCurrencies = selectedCurrencies.filter(item => item !== value);
+        }
+    }
+    // Filter corresponding countries
+    for (const countryName in allCountries) {
+        const country = allCountries[countryName];
+
+        // Check continents
+        const countryContinents = country.continents || '';
+        const countryContinentsArray = countryContinents.split(',').map(continent => continent.trim());
+        const anyMatchingContinent = countryContinentsArray.some(continent => selectedContinents.includes(continent));
+
+        // Check languages
+        const countryLanguages = country.languages || '';
+        const countryLanguagesArray = countryLanguages.split(',').map(language => language.trim());
+        const anyMatchingLanguage = countryLanguagesArray.some(language => selectedLanguages.includes(language));
+
+        // Check currencies
+        const countryCurrencies = country.currencies || {};
+        const countryCurrenciesArray = Object.entries(countryCurrencies).map(([abbreviation, currency]) => {
+            const symbol = currency.symbol || '';
+            return `${abbreviation} (${symbol})`;
+        });
+        const anyMatchingCurrency = countryCurrenciesArray.some(currency => selectedCurrencies.includes(currency));
+
+        // Debugging logs for Algeria
+        if (countryName === 'Albania') {
+            console.log(`${countryName}`);
+            console.log(`    anyMatchingContinent: ${anyMatchingContinent}`);
+            console.log(`    anyMatchingLanguage: ${anyMatchingLanguage}`);
+            // console.log(`    countryCurrencies: ${countryCurrencies}`);
+            // console.log(`    countryCurrenciesArray: ${countryCurrenciesArray}`);
+            // console.log(`    selectedCurrencies: ${selectedCurrencies}`);
+            console.log(`    anyMatchingCurrency: ${anyMatchingCurrency}`);
+        }
+
+        // Toggle visibility of country box
+        const countryBox = document.getElementById(countryName);
+        if (anyMatchingContinent && anyMatchingLanguage && anyMatchingCurrency) {
+            countryBox.classList.remove('d-none');
+        } else {
+            countryBox.classList.add('d-none');
+        }
+    }
+}
 
 // Expand a country 'box' to show country details
 async function expandCountry(countryBox) {
@@ -305,13 +389,6 @@ function hideAllCountries() {
     }
 }
 
-function toggleFiltersSidepanel() {
-    const filtersSidepanel = document.getElementById('filters-box');
-    toggleClass(filtersSidepanel, 'active-sidepanel');
-    const backdrop = document.getElementById('backdrop');
-    toggleClass(backdrop, 'd-none');
-}
-
 function search(inputValue) {
     const matchedCountries = [];
     countriesList.forEach(country => {
@@ -363,6 +440,13 @@ async function toggleCountry(countryBox) {
     const countryBoxDetails = countryBox.querySelector('.details');
     toggleClass(countryBoxDetails, 'd-none');
     toggleTitleDiv(countryBox);
+}
+
+function toggleFiltersSidepanel() {
+    const filtersSidepanel = document.getElementById('filters-box');
+    toggleClass(filtersSidepanel, 'active-sidepanel');
+    const backdrop = document.getElementById('backdrop');
+    toggleClass(backdrop, 'd-none');
 }
 
 function toggleTitleDiv (countryBox) {
