@@ -208,9 +208,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     sortOptionsBox.querySelectorAll('button').forEach(option => {
         option.addEventListener('click', () => {
             const order = option.getAttribute('data-order');
-            console.log(`Selected order: ${order}`);
-            // Implement sorting logic based on the selected option here
             sortOptionsBox.style.display = 'none';
+            sortOptionsBox.querySelectorAll('button').forEach(button => {
+                button.classList.remove('selected');
+            });
+            option.classList.add('selected');
         });
     });
     document.addEventListener('click', (event) => {
