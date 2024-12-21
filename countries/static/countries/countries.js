@@ -4,6 +4,7 @@ let allCountries = {};
 let selectedContinents = []
 let selectedLanguages = []
 let selectedCurrencies = []
+let countriesOrder = []
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch Countries API when page loaded 
@@ -213,13 +214,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                 button.classList.remove('selected');
             });
             option.classList.add('selected');
+            if (option.id == 'sort-alphabetically-asc') {
+                countriesOrder = Object.keys(allCountries).sort();
+            } else if (option.id == 'sort-alphabetically-desc') {
+                countriesOrder = Object.keys(allCountries).sort((a, b) => b.localeCompare(a));
+            } else if (option.id == 'sort-area-asc') {
+                countriesOrder = Object.entries(allCountries)
+                    .sort(([, dataA], [, dataB]) => dataA.area - dataB.area)
+                    .map(([countryName]) => countryName); 
+            } else if (option.id == 'sort-area-desc') {
+                countriesOrder = Object.entries(allCountries)
+                .sort(([, dataA], [, dataB]) => dataB.area - dataA.area)
+                .map(([countryName]) => countryName);
+            } else if (option.id == 'sort-population-asc') {
+                countriesOrder = Object.entries(allCountries)
+                    .sort(([, dataA], [, dataB]) => dataA.population - dataB.population)
+                    .map(([countryName]) => countryName); 
+            } else if (option.id == 'sort-population-desc') {
+                countriesOrder = Object.entries(allCountries)
+                    .sort(([, dataA], [, dataB]) => dataB.population - dataA.population)
+                    .map(([countryName]) => countryName);
+            }
+            const allCountriesContainer = document.getElementById('all-countries-container');
+            const countryBoxes = Array.from(allCountriesContainer.getElementsByClassName('country-box'));
+            countryBoxes.sort((a, b) => {
+                const countryNameA = a.id;
+                const countryNameB = b.id;
+                const indexA = countriesOrder.indexOf(countryNameA);
+                const indexB = countriesOrder.indexOf(countryNameB);
+                return indexA - indexB;
+            });
+            countryBoxes.forEach(box => {
+                allCountriesContainer.appendChild(box);
+            });
         });
     });
     document.addEventListener('click', (event) => {
         if (!sortBtn.contains(event.target) && !sortOptionsBox.contains(event.target)) {
             sortOptionsBox.style.display = 'none';
         }
-    });
+    })
 
     // Add search bar functionality
     let typingTimer;
