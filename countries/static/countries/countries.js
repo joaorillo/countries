@@ -204,7 +204,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sortBtn = document.getElementById('sort-btn');
     const sortOptionsBox = document.getElementById('sort-options-box');
     sortBtn.addEventListener('click', () => {
-        sortOptionsBox.style.display = sortOptionsBox.style.display === 'block' ? 'none' : 'block';
+        if (!sortBtn.classList.contains('deactivated')) {
+            sortOptionsBox.style.display = sortOptionsBox.style.display === 'block' ? 'none' : 'block';
+        }
     });
     sortOptionsBox.querySelectorAll('button').forEach(option => {
         option.addEventListener('click', () => {
@@ -262,7 +264,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeSearchBtn = document.getElementById('close-search-btn');
     const noQuery = document.getElementById('no-query');
     searchBarInput.addEventListener('input', function() {
-        clearTimeout(typingTimer); // Reset the timer when the user presses a key
+        clearTimeout(typingTimer);
         const inputValue = this.value;
         if (inputValue.length >= 3) {
             noQuery.classList.add('d-none');
@@ -278,7 +280,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeSearchBtn.classList.add('d-none');
             showAllCountries();
         }
-        // Set a timeout to trigger the function after the user stops typing
     });
     searchBarInput.addEventListener('click', function() {
         const inputValue = this.value;
@@ -289,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         closeSearchBtn.classList.remove('d-none');
     });
     searchBarInput.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') { // If the user presses 'Enter', call the function immediately
+        if (event.key === 'Enter') {
             event.preventDefault();
             const inputValue = this.value;
             if (inputValue.length >= 3) {
@@ -462,6 +463,8 @@ function hideAllCountries() {
     if (openedBox) {
         toggleCountry(openedBox);
     }
+    const sortBtn = document.getElementById('sort-btn');
+    sortBtn.classList.add('deactivated');
 }
 
 function search(inputValue) {
@@ -487,7 +490,10 @@ function search(inputValue) {
 function showAllCountries() {
     const allCountriesContainer = document.getElementById('all-countries-container');
     allCountriesContainer.classList.remove('d-none');
+    const searchContainer = document.getElementById('search-container');
     searchContainer.innerHTML = '';
+    const sortBtn = document.getElementById('sort-btn');
+    sortBtn.classList.remove('deactivated');
 }
 
 function toggleClass(element, classToToggle) {

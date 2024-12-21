@@ -202,14 +202,30 @@ body {
                         i {
                             color: var(--primary-dark-red);
                         }
+
+                        &.deactivated {
+                            background-color: var(--primary-brown);
+
+                            i {
+                                color: black;
+                            }
+                        }
                     }
 
                     #filters-btn:hover, #sort-btn:hover {
                         background-color: var(--primary-brown);
 
-                        .fa-filter {
+                        i {
                             color: var(--hover-btn-icon);
                             transform: scale(1.2);
+                        }
+
+                        &.deactivated {
+                            cursor: auto;
+
+                            i {
+                                transform: scale(1.0);
+                            }
                         }
                     }
 
