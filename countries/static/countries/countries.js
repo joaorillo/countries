@@ -94,6 +94,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     });
 
+    // Create all countries instances
+    createAllCountries();
+
     // Reorder lists and initializes selected filters' lists
     allContinents.sort();
     selectedContinents = allContinents;
@@ -378,6 +381,27 @@ function applyFilter(type, value) {
                 countryBoxSearch.classList.add('d-none');
             }
         }
+    }
+}
+
+// Function to fetch API endpoint to create all countries
+async function createAllCountries() {
+    try {
+        const response = await fetch('/create_countries', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(allCountries)
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        } else {
+            result = response.json();
+            console.log('Success:', result);
+        }
+    } catch (error) {
+        console.error('Failed to send countries:', error);
     }
 }
 
