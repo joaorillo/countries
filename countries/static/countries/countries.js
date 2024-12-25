@@ -89,7 +89,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             area: countryData.area ?? '-',
             capital: countryData.capital?.join(', ') ?? '-',
             languages: countryData.languages ? Object.values(countryData.languages).join(', ') : '-',
-            currencies: countryData.currencies ?? '-',
+            currencies: countryData.currencies 
+                ? Object.entries(countryData.currencies)
+                    .map(([abbreviation, currency]) => {
+                        const symbol = currency.symbol || '';
+                        return `${abbreviation} (${symbol})`;
+                    }).join(', ') 
+                : '-',
             flagUrl: countryData.flags.png ?? '-'
         };
     });
@@ -361,10 +367,7 @@ function applyFilter(type, value) {
 
         // Check currencies
         const countryCurrencies = country.currencies || {};
-        const countryCurrenciesArray = Object.entries(countryCurrencies).map(([abbreviation, currency]) => {
-            const symbol = currency.symbol || '';
-            return `${abbreviation} (${symbol})`;
-        });
+        const countryCurrenciesArray = countryCurrencies.split(',').map(currency => currency.trim());
         const anyMatchingCurrency = countryCurrenciesArray.some(currency => selectedCurrencies.includes(currency));
 
         // Toggle visibility of country box (and their search 'clones')
@@ -396,29 +399,28 @@ async function createAllCountries() {
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
-        } else {
-            result = response.json();
-            console.log('Success:', result);
         }
+        const result = await response.json();
+        console.log('Success:', result);
+        return result;
     } catch (error) {
         console.error('Failed to send countries:', error);
     }
 }
 
-// Expand a country 'box' to show country details
+// Expand a 'country box' to show country details
 async function expandCountry(countryBox) {
     const countryTitle = countryBox.querySelector('.country-name');
-    console.log(allCountries);
     const countryName = countryTitle ? countryTitle.textContent : null;
-    const countryData = allCountries[countryName];
-    const officialName = countryData.officialName;
+    const countryData = await getCountryInfo(countryName);
+    const officialName = countryData.official_name;
     const continents = countryData.continents;
     const population = countryData.population;
     const area = countryData.area;
     const capital = countryData.capital;
     const languages = countryData.languages;
     const currencies = countryData.currencies;
-    const flagUrl = countryData.flagUrl;
+    const flagUrl = countryData.flag_url;
     // Create country box 'details' div with two columns for expanded box: 'Text' and 'Image' (flag)
     const countryBoxDetails = document.createElement('div');
     countryBoxDetails.classList.add('details', 'd-none');
@@ -456,27 +458,29 @@ async function expandCountry(countryBox) {
     textColumn.appendChild(languagesTag);
     // Create 'Currencies' field
     const currenciesTag = document.createElement('p');
-    let currenciesString;
-    if (currencies === '-') {
-        currenciesString = '-';
-    } else {
-        const currenciesList = [];
-        for (const currencyCode in currencies) {
-            currenciesList.push({
-                currencyCode: currencyCode,
-                symbol: currencies[currencyCode].symbol
-            })
-        }
-        currenciesString = currenciesList
-            .map(currency => `${currency.currencyCode} (${currency.symbol})`)
-            .join(', ');
-    }
-    currenciesTag.innerHTML = `<strong>Currencies:</strong> ${currenciesString}`;
+    currenciesTag.innerHTML = `<strong>Currencies:</strong> ${currencies}`;
     textColumn.appendChild(currenciesTag);
     // Create 'Image' (flag) field
     const flagTag = document.createElement('img');
     flagTag.src = flagUrl;
     imageColumn.appendChild(flagTag);
+}
+
+// Function to fetch API endpoint to get country's info given its name
+async function getCountryInfo(countryName) {
+    try {
+        const response = await fetch(`/get_country_data/${countryName}`, {
+            method: 'GET'
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+        const result = await response.json();
+        console.log('Success:', result);
+        return result;
+    } catch (error) {
+        console.error('Failed to send countries:', error);
+    }
 }
 
 function hideAllCountries() {

@@ -11,7 +11,7 @@ class Country (models.Model):
     capital = models.CharField(max_length=100)
     languages = models.CharField(max_length=100)
     currencies = models.CharField(max_length=100)
-    flagUrl = models.URLField(max_length=200)
+    flag_url = models.URLField(max_length=200)
 
     def __str__(self):
         return self.name
