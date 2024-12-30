@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
 })
 
-// Hide / unhide elements given a filter option that was clicked
+// Function to hide / unhide elements given a filter option that was clicked
 function applyFilter(type, value) {
     // Update the corresponding 'selected filters' list
     if (type == 'continent') {
@@ -408,7 +408,7 @@ async function createAllCountries() {
     }
 }
 
-// Expand a 'country box' to show country details
+// Function to expand a 'country box' to show country details
 async function expandCountry(countryBox) {
     const countryTitle = countryBox.querySelector('.country-name');
     const countryName = countryTitle ? countryTitle.textContent : null;
@@ -483,6 +483,7 @@ async function getCountryInfo(countryName) {
     }
 }
 
+// Function to hide all 'country boxes'
 function hideAllCountries() {
     const allCountriesContainer = document.getElementById('all-countries-container');
     allCountriesContainer.classList.add('d-none');
@@ -495,26 +496,36 @@ function hideAllCountries() {
     sortBtn.classList.add('deactivated');
 }
 
+// Function to update 'country boxes' shown given a search query
 function search(inputValue) {
+    // Initializes empty list of countries that match the search query
     const matchedCountries = [];
+    // Analyses each country to see if it matches the search query
     countriesList.forEach(country => {
         if (country.toLowerCase().startsWith(inputValue.toLowerCase())) {
+            // Countries that start with the search query have priority 1
             matchedCountries.push({ country, priority: 1 });
         } else if (country.toLowerCase().includes(inputValue.toLowerCase())) {
+            // Countries that only contain (do not start with) the search query have priority 2
             matchedCountries.push({ country, priority: 2 });
         }
     });
+    // Sort matched countries given their priority
     matchedCountries.sort((a, b) => a.priority - b.priority);
+    // Append matched countries' 'country boxes' to HTML
     const searchContainer = document.getElementById('search-container');
     matchedCountries.forEach(({ country }) => {
         const countryBox = document.getElementById(country);
+        // Create a clone of the original 'country box' to be appended to HTML
         const clonedBox = countryBox.cloneNode(true);
         clonedBox.id = `${country}-search`;
         clonedBox.onclick = () => {toggleCountry(clonedBox)};
+        // Append cloned 'country box' to HTML
         searchContainer.appendChild(clonedBox);
     });
 }
 
+// Function to show all 'country boxes'
 function showAllCountries() {
     const allCountriesContainer = document.getElementById('all-countries-container');
     allCountriesContainer.classList.remove('d-none');
@@ -524,6 +535,7 @@ function showAllCountries() {
     sortBtn.classList.remove('deactivated');
 }
 
+// Function to toggle a given class of a given element
 function toggleClass(element, classToToggle) {
     if (element.classList.contains(classToToggle)) {
         element.classList.remove(classToToggle);
@@ -532,6 +544,7 @@ function toggleClass(element, classToToggle) {
     }
 }
 
+// Function to expand/collapse a 'country box'
 async function toggleCountry(countryBox) {
     if (countryBox.classList.contains('collapsed')) {
         if (openedBox) {
@@ -552,6 +565,7 @@ async function toggleCountry(countryBox) {
     toggleTitleDiv(countryBox);
 }
 
+// Function to hide/unhide Filter Sidepanel (mobile-only)
 function toggleFiltersSidepanel() {
     const filtersSidepanel = document.getElementById('filters-box');
     toggleClass(filtersSidepanel, 'active-sidepanel');
@@ -559,6 +573,7 @@ function toggleFiltersSidepanel() {
     toggleClass(backdrop, 'd-none');
 }
 
+// Function to toggle element of class 'title-div' inside of a 'country box'
 function toggleTitleDiv (countryBox) {
     const titleDiv = countryBox.querySelector('.title-div');
     const flagTag = titleDiv.querySelector('.flag');
