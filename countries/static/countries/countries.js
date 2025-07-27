@@ -9,7 +9,9 @@ let countriesOrder = []
 document.addEventListener('DOMContentLoaded', async () => {
     // Fetch Countries API when page loaded 
     try {
-        const response = await fetch('https://restcountries.com/v3.1/all');
+        const response = await fetch(
+            'https://restcountries.com/v3.1/all?fields=name,continents,population,area,languages,currencies,flags'
+        );
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -366,7 +368,7 @@ function applyFilter(type, value) {
         const anyMatchingLanguage = countryLanguagesArray.some(language => selectedLanguages.includes(language));
 
         // Check currencies
-        const countryCurrencies = country.currencies || {};
+        const countryCurrencies = country.currencies;
         const countryCurrenciesArray = countryCurrencies.split(',').map(currency => currency.trim());
         const anyMatchingCurrency = countryCurrenciesArray.some(currency => selectedCurrencies.includes(currency));
 
