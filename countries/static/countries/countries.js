@@ -448,7 +448,7 @@ async function expandCountry(countryBox) {
     textColumn.appendChild(populationTag);
     // Create 'Area' field
     const areaTag = document.createElement('p');
-    areaTag.innerHTML = `<strong>Area:</strong> ${area.toLocaleString('de-DE')}m²`;
+    areaTag.innerHTML = `<strong>Area:</strong> ${area.toLocaleString('de-DE')}km²`;
     textColumn.appendChild(areaTag);
     // Create 'Capital' field
     const capitalTag = document.createElement('p');
