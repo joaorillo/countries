@@ -500,6 +500,9 @@ function hideAllCountries() {
 
 // Function to update 'country boxes' shown given a search query
 function search(inputValue) {
+    // Clears search results
+    const searchContainer = document.getElementById("search-container");
+    searchContainer.innerHTML = "";
     // Initializes empty list of countries that match the search query
     const matchedCountries = [];
     // Analyses each country to see if it matches the search query
@@ -515,7 +518,6 @@ function search(inputValue) {
     // Sort matched countries given their priority
     matchedCountries.sort((a, b) => a.priority - b.priority);
     // Append matched countries' 'country boxes' to HTML
-    const searchContainer = document.getElementById('search-container');
     matchedCountries.forEach(({ country }) => {
         const countryBox = document.getElementById(country);
         // Create a clone of the original 'country box' to be appended to HTML
